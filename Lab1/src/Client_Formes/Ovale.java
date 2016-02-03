@@ -18,6 +18,7 @@ public class Ovale extends Forme{
 		this.centreY = centreY;
 		this.rayonH = rayonH;
 		this.rayonV = rayonV;
+		super.definirDessin(dessinerForme());
 	}
 
 	public Shape dessinerForme() {

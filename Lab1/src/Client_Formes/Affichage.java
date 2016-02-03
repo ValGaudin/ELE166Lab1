@@ -37,8 +37,8 @@ public class Affichage extends JFrame{
 
 	private static final String TITRE_CLIENT = "Client de Formes";
 
-	private static final int DELAI_MS = 1000;
-	private static final int NOMBRE_FORMES = 30;
+	private static final int DELAI_MS = 100;
+	private static final int NOMBRE_FORMES = 100;
 	private static final int LARGEUR_CANEVAS = 500;
 	private static final int HAUTEUR_CANEVAS = 500;
 	private static final int MARGE_H = 50;
@@ -48,8 +48,8 @@ public class Affichage extends JFrame{
 	/*
 	 * Attribut qui représente une seule forme
 	 */
-	static Queue<Shape> dessin  = new LinkedList<Shape>();
-	static Queue<Color> couleur = new LinkedList<Color>();
+	static Queue<Forme> listeForme = new LinkedList<Forme>();
+	Iterator<Forme> iterator;
 
 
 	/**
@@ -99,7 +99,7 @@ public class Affichage extends JFrame{
 			 * Si la forme (attribut de la classe principale ici) n'est pas 
 			 * nulle, on la dessine
 			 */
-			if (dessin != null)
+			if (listeForme != null)
 			{
 				// faire un cast (transtypage) en Graphics2D depour avoir plus de fonctionnalité
 				Graphics2D g2d = (Graphics2D) g;
@@ -107,32 +107,18 @@ public class Affichage extends JFrame{
 				g2d.setRenderingHint(
 						RenderingHints.KEY_ANTIALIASING,
 						RenderingHints.VALUE_ANTIALIAS_ON);
-				// theColor = une variable de la classe principale
 
-				Iterator<Color> it1 = couleur.iterator();
-				Iterator<Shape> it2 = dessin.iterator();
-				Shape dessin = null;
-				Color couleur = null;
+				Forme forme = null;
+				iterator = listeForme.iterator();
+				
+				while (iterator.hasNext()) {
+					forme = iterator.next();
 
-				while (it1.hasNext() && it2.hasNext()) {
-					couleur = it1.next();
-					dessin = it2.next();
-
-					g2d.setPaint(couleur);
-					g2d.fill(dessin);
+					g2d.setPaint(forme.obtenirCouleur());
+					g2d.fill(forme.obtenirDessin());
 					g2d.setPaint(Color.black);
-					g2d.draw(dessin);
+					g2d.draw(forme.obtenirDessin());
 				}
-
-				//				for (Iterator iterator; iterator.hasNext()) {
-				//					couleur.iterator();
-				//					
-				//					g2d.setPaint(couleur.);
-				//					g2d.fill(dessin.get(i));
-				//					g2d.setPaint(Color.black);
-				//					g2d.draw(dessin.get(i));
-				//				}
-
 			}
 		}
 	}
@@ -178,7 +164,6 @@ public class Affichage extends JFrame{
 	 *
 	 * @param args a <code>String[]</code> value
 	 */
-	@SuppressWarnings("null")
 	public static void main(String[] args)
 	{
 		Forme forme = null;
@@ -195,19 +180,16 @@ public class Affichage extends JFrame{
 			client.ecritureServeur("GET");
 			forme = CreateurDeFormes.obtenirForme(client.decoupageInstructionForme(client.lectureServeur()));
 			idLogger.logID(forme.obtenirIDLogger());
-			
+
 			if(i<10){
-				dessin.add(forme.dessinerForme());
-				couleur.add(forme.obtenirCouleur());
+				listeForme.add(forme);
 			}else
 			{	
-				dessin.remove();
-				dessin.add(forme.dessinerForme());
-				couleur.remove();
-				couleur.add(forme.obtenirCouleur());
+				listeForme.remove();
+				listeForme.add(forme);
 			}
 
-				frame.repaint();
+			frame.repaint();
 			try
 			{
 				// pause de N millisecondes
