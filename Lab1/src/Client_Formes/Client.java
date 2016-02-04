@@ -1,41 +1,28 @@
 package Client_Formes;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.net.Socket;
 
-public class Client{
-	private static final String hostName = "localhost";
-	private static final int portNumber = 10000;
-	private static Socket socket = null;
-	private static PrintWriter outSocket = null;
-	private static BufferedReader inSocket = null;
+public abstract class Client{
+	private static final String HOST_NAME = "localhost";
+	private static final int PORT_NUMBER = 10000;
 
-	public Client() {
-		etablirConnection();
+	public abstract void etablirConnexion(String hostName, int portNumber);
+	public abstract void fermerConnexion();
+
+	public String obtenirHostName(){
+		return HOST_NAME;
 	}
 
-	public void etablirConnection(){
-		try{
-			socket = new Socket(hostName, portNumber);
-			outSocket = new PrintWriter(socket.getOutputStream(), true);
-			inSocket = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-
-			System.out.println("Connection OK.");	
-		}
-		catch(Exception e){
-			System.out.println(e.getMessage());
-		}
+	public int obtenirPortNumber(){
+		return PORT_NUMBER;
 	}
 
 	public String lectureServeur(){
 		String instractionForme = null;
 
 		try {
-			inSocket.readLine();					// Lecture de la ligne "commande"
-			instractionForme = inSocket.readLine(); // Lecture du type de forme + numéro d'indentification
+			Connexion.obtenirBufferedReader().readLine();					 // Lecture de la ligne "commande"
+			instractionForme = Connexion.obtenirBufferedReader().readLine(); // Lecture du type de forme + numéro d'indentification
 
 		} catch (IOException e) {
 			System.out.println(e.getMessage());
@@ -45,16 +32,12 @@ public class Client{
 	}
 
 	public void ecritureServeur(String commande){
-
-		outSocket.println(commande);
-	}
-
-	public void fermerConnection(){
-		outSocket.println("END");
-		System.out.println("Connection fermée.");
+		Connexion.obtenirPrinterWriter().println(commande);
 	}
 
 	public String[] decoupageInstructionForme(String instructionForme){
 		return instructionForme.replaceFirst("<", " ").replaceFirst(">", " ").split("\\s+");
 	}
+
+
 }

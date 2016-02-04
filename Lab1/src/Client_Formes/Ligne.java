@@ -5,7 +5,7 @@ import java.awt.Shape;
 import java.awt.geom.Line2D;
 
 public class Ligne extends Forme{
-	private static final Color couleur = Color.BLACK;
+	private static final Color couleur = Color.WHITE;
 	private int x1 = 0;
 	private int y1 = 0;
 	private int x2 = 0;

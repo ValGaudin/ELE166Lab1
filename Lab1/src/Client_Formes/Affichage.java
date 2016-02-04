@@ -9,9 +9,8 @@ import java.awt.RenderingHints;
 import java.awt.Shape;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.IOException;
 import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.Queue;
 
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;
@@ -19,8 +18,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.WindowConstants;
-
-import ca.etsmtl.log.util.IDLogger;
 
 public class Affichage extends JFrame{
 	/*
@@ -37,8 +34,8 @@ public class Affichage extends JFrame{
 
 	private static final String TITRE_CLIENT = "Client de Formes";
 
-	private static final int DELAI_MS = 100;
-	private static final int NOMBRE_FORMES = 100;
+	private static final int DELAI_MS = 10;
+	private static final int NOMBRE_FORME_AFFICHE = 100;
 	private static final int LARGEUR_CANEVAS = 500;
 	private static final int HAUTEUR_CANEVAS = 500;
 	private static final int MARGE_H = 50;
@@ -46,11 +43,10 @@ public class Affichage extends JFrame{
 	private static final int FORME_MAX_LARGEUR = 200;
 	private static final int FORME_MAX_HAUTEUR = 200;
 	/*
-	 * Attribut qui représente une seule forme
+	 * Attribut qui représente la queue de formes
 	 */
-	static Queue<Forme> listeForme = new LinkedList<Forme>();
+	QueueForme queueForme = new QueueForme(NOMBRE_FORME_AFFICHE);
 	Iterator<Forme> iterator;
-
 
 	/**
 	 * <code>CustomCanvas</code> est une "inner" classe qui permet de dessiner
@@ -71,7 +67,7 @@ public class Affichage extends JFrame{
 		{
 			setSize(getPreferredSize());
 			setMinimumSize(getPreferredSize());
-			CustomCanvas.this.setBackground(Color.white);
+			CustomCanvas.this.setBackground(Color.BLACK);
 		}
 
 		/**
@@ -95,11 +91,12 @@ public class Affichage extends JFrame{
 			/* dessiner le fonds (background) -- obligatoire */
 			super.paintComponent(g);
 
+
 			/*
 			 * Si la forme (attribut de la classe principale ici) n'est pas 
 			 * nulle, on la dessine
 			 */
-			if (listeForme != null)
+			if (queueForme != null)
 			{
 				// faire un cast (transtypage) en Graphics2D depour avoir plus de fonctionnalité
 				Graphics2D g2d = (Graphics2D) g;
@@ -109,17 +106,30 @@ public class Affichage extends JFrame{
 						RenderingHints.VALUE_ANTIALIAS_ON);
 
 				Forme forme = null;
-				iterator = listeForme.iterator();
-				
+				Shape dessin = null;
+				iterator = queueForme.obtenirListe().iterator();
+
 				while (iterator.hasNext()) {
 					forme = iterator.next();
+					dessin = forme.obtenirDessin();
 
 					g2d.setPaint(forme.obtenirCouleur());
-					g2d.fill(forme.obtenirDessin());
-					g2d.setPaint(Color.black);
-					g2d.draw(forme.obtenirDessin());
+					g2d.fill(dessin);
+					g2d.setPaint(Color.GREEN);
+					g2d.draw(dessin);
 				}
 			}
+		}
+	}
+
+	public void attendre(){
+		try
+		{
+			// pause de N millisecondes
+			Thread.sleep(DELAI_MS);
+		} catch (InterruptedException e)
+		{
+			e.printStackTrace();
 		}
 	}
 
@@ -137,10 +147,9 @@ public class Affichage extends JFrame{
 		getContentPane().add(new JScrollPane(new CustomCanvas()));
 	}
 
-	public void launch(final JFrame jFrame, String title, final int xBounds, final int yBounds,
-			final int width, final int height) {
-		jFrame.setTitle(title);
-		jFrame.setBounds(xBounds,yBounds,width,height);
+	public void launch(final JFrame jFrame) {
+		jFrame.setTitle(TITRE_CLIENT);
+		jFrame.setBounds(0, 0, LARGEUR_CANEVAS + MARGE_H, HAUTEUR_CANEVAS + MARGE_V);
 		jFrame.setVisible(true);
 		jFrame.setResizable(true);
 
@@ -154,52 +163,21 @@ public class Affichage extends JFrame{
 
 		jFrame.addWindowListener(new WindowAdapter() {
 			public void windowClosed(WindowEvent event) {
+
+				try {
+					if (Connexion.obtenirSocket() != null){
+						Connexion.obtenirPrinterWriter().println("END");
+						Connexion.obtenirSocket().close();
+						System.out.println("Connection fermée.");
+					}else
+						throw new Exception("Déjà fermé !");
+
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+
 				System.exit(0);
 			}
 		});
-	}
-
-	/**
-	 * Describe <code>main</code> method here.
-	 *
-	 * @param args a <code>String[]</code> value
-	 */
-	public static void main(String[] args)
-	{
-		Forme forme = null;
-		Affichage frame = new Affichage();
-		Client client = new Client();
-		IDLogger idLogger = IDLogger.getInstance();
-
-		frame.launch(frame, TITRE_CLIENT, 0, 0, LARGEUR_CANEVAS + MARGE_H, HAUTEUR_CANEVAS + MARGE_V);
-
-		// pour centrer la fenêtre ?
-		frame.setLocationRelativeTo(null);
-
-		for(int i=0;i<NOMBRE_FORMES;i++){
-			client.ecritureServeur("GET");
-			forme = CreateurDeFormes.obtenirForme(client.decoupageInstructionForme(client.lectureServeur()));
-			idLogger.logID(forme.obtenirIDLogger());
-
-			if(i<10){
-				listeForme.add(forme);
-			}else
-			{	
-				listeForme.remove();
-				listeForme.add(forme);
-			}
-
-			frame.repaint();
-			try
-			{
-				// pause de N millisecondes
-				Thread.sleep(DELAI_MS);
-			} catch (InterruptedException e)
-			{
-				e.printStackTrace();
-			}
-		}
-
-		client.fermerConnection();
 	}
 }
