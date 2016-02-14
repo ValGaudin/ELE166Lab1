@@ -9,32 +9,29 @@ import java.awt.RenderingHints;
 import java.awt.Shape;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.IOException;
 import java.util.Iterator;
 
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.WindowConstants;
 
+/**
+ * Classe <b><i>Affichage</i></b> <br><br>
+ * 
+ * Affichage est une classe qui permet de dessiner
+ * des objets dans une fenêtre. 
+ */
+@SuppressWarnings("serial")
 public class Affichage extends JFrame{
-	/*
-	 * Il vaut mieux déclarer les variables constantes (static final) pour les
-	 * chaînes de caractère ou les valeurs importantes. Le code est plus lisible
-	 * puisqu'on comprend le sens de l'information. Le code est plus facile à 
-	 * maintenir : pour effectuer un changement, l'information est centralisée.
-	 * 
-	 * Voir les fichiers prefs.properties et app_xx.properties (où xx définit les
-	 * chaînes pour chaque langue)
-	 */
+
 	private static final JPanel STATUS_AREA = new JPanel();
 	private static final JLabel STATUS = new JLabel();
 
 	private static final String TITRE_CLIENT = "Client de Formes";
 
-	private static final int DELAI_MS = 10;
+	private static final int DELAI_MS = 25;
 	private static final int NOMBRE_FORME_AFFICHE = 100;
 	private static final int LARGEUR_CANEVAS = 500;
 	private static final int HAUTEUR_CANEVAS = 500;
@@ -42,27 +39,28 @@ public class Affichage extends JFrame{
 	private static final int MARGE_V = 60;
 	private static final int FORME_MAX_LARGEUR = 200;
 	private static final int FORME_MAX_HAUTEUR = 200;
+
 	/*
 	 * Attribut qui représente la queue de formes
 	 */
 	QueueForme queueForme = new QueueForme(NOMBRE_FORME_AFFICHE);
 	Iterator<Forme> iterator;
-
+	
 	/**
-	 * <code>CustomCanvas</code> est une "inner" classe qui permet de dessiner
+	 * Classe <b><i>CustomCanvas</i></b> <br><br>
+	 * 
+	 * CustomCanvas est une "inner" classe qui permet de dessiner
 	 * des objets dans l'interface Swing. 
-	 *
-	 * On utilise une inner classe pour faciliter la visibilites des
-	 * variables dans la classe exterieure.
-	 *
-	 * Voir 
-	 * <a href="http://java.sun.com/docs/books/tutorial/uiswing/painting/overview.html">Overview of Custom Painting</a>, 
-	 * une partie du tutoriel Java de Sun.
-	 *
 	 */
 	class CustomCanvas extends JPanel
 	{
-
+		/**
+		 * Constructeur de la classe <b><i>CustomCanvas</i></b> <br>
+		 * &nbsp; public CustomCanvas() <br><br>
+		 * 
+		 * Cette methode cree une nouvelle instance de la
+		 * classe.
+		 */
 		public CustomCanvas()
 		{
 			setSize(getPreferredSize());
@@ -71,9 +69,10 @@ public class Affichage extends JFrame{
 		}
 
 		/**
-		 * <code>getPreferredSize</code> retourne la dimension du JPanel
+		 * <b><i>getPreferredSize</i></b> 
+		 * permet de retourner les dimensions désirées
 		 *
-		 * @return a <code>Dimension</code> value
+		 * @return les Dimension définies comme constantes 
 		 */
 		public Dimension getPreferredSize()
 		{
@@ -81,20 +80,20 @@ public class Affichage extends JFrame{
 		}
 
 		/**
-		 * <code>paintComponent</code> contient le code pour le dessin
-		 * "fait sur commande"
-		 *
-		 * @param g a <code>Graphics</code> value
+		 * <b><i>paintComponent</i></b> 
+		 * permet de peindre les composants désirés sur le graphique reçu 
+		 * (ici, des formes contenues dans la queue de formes)
+		 *  
+		 * @param g Graphics dans lequel on va peindre des composants
 		 */
-		public void paint(Graphics g)
+		public void paintComponent(Graphics g)
 		{
 			/* dessiner le fonds (background) -- obligatoire */
 			super.paintComponent(g);
 
 
 			/*
-			 * Si la forme (attribut de la classe principale ici) n'est pas 
-			 * nulle, on la dessine
+			 * Si la queue de formes n'est pas nulle, on la dessine.
 			 */
 			if (queueForme != null)
 			{
@@ -122,6 +121,11 @@ public class Affichage extends JFrame{
 		}
 	}
 
+	/**
+	 * <b><i>attendre</i></b> 
+	 * permet de mettre un délai dans l'execution du code
+	 * (ici, elle permet de temporiser l'affichage des figures).
+	 */
 	public void attendre(){
 		try
 		{
@@ -134,19 +138,25 @@ public class Affichage extends JFrame{
 	}
 
 	/**
-	 * Constructeur de la classe <code>SqueletteSwingApplication</code>.
-	 * Cette methode cree une nouvelle instance (nouvel objet) de la
-	 * classe.
+	 * Constructeur de la classe <b><i>Affichage</i></b> <br>
+	 * 
+	 * Cette methode crée une nouvelle instance de la classe.
 	 */
 	public Affichage()
 	{
 		/*
-		 * Creer un objet CustomCanvas (JPanel) et mettre un scrollpane autour,
-		 * puis placer le tout dans le contenu du JFrame (SqueletteSwingApplication)
+		 * Creer un objet CustomCanvas (JPanel) puis placer le contenu du JFrame
 		 */
-		getContentPane().add(new JScrollPane(new CustomCanvas()));
+		getContentPane().add(new CustomCanvas());
 	}
 
+	/**
+	 * <b><i>launch</i></b>  
+	 * permet d'initialiser et lancer le frame à l'aide des 
+	 * variables constantes de cette classe.
+	 * 
+	 * @param jFrame le jFrame à initialiser et à lancer
+	 */
 	public void launch(final JFrame jFrame) {
 		jFrame.setTitle(TITRE_CLIENT);
 		jFrame.setBounds(0, 0, LARGEUR_CANEVAS + MARGE_H, HAUTEUR_CANEVAS + MARGE_V);
@@ -164,13 +174,14 @@ public class Affichage extends JFrame{
 		jFrame.addWindowListener(new WindowAdapter() {
 			public void windowClosed(WindowEvent event) {
 
+				/*
+				 * Permet de fermer la connection dans le cas où on fermerait la fenêtre 
+				 * sans avoir fini de récupérer toutes les formes voulues.
+				 */
 				try {
-					if (Connexion.obtenirSocket() != null){
-						Connexion.obtenirPrinterWriter().println("END");
-						Connexion.obtenirSocket().close();
-						System.out.println("Connection fermée.");
-					}else
-						throw new Exception("Déjà fermé !");
+					Connexion.obtenirPrinterWriter().println("END");
+					Connexion.obtenirSocket().close();
+					System.out.println("Connection fermée.");
 
 				} catch (Exception e) {
 					e.printStackTrace();

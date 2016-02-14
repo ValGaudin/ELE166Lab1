@@ -1,7 +1,18 @@
 package Client_Formes;
 
+/**
+ * Classe <b><i>CreateurDeFormes</i></b> <br><br>
+ * CreateurDeFormes est une classe qui permet de créer un objet {@link Forme Forme}. 
+ */
 public class CreateurDeFormes {
 	
+	/**
+	 * <b><i>obtenirForme</i></b> 
+	 * permet de renvoyer une nouvelle instance de la forme voulue.
+	 * 
+	 * @param laForme - l'instruction de la forme
+	 * @return  {@link Forme Forme} - l'instance de la forme
+	 */
 	public static Forme obtenirForme(String[] laForme){
 		Forme forme = null;
 		String nomDeForme = laForme[1];
