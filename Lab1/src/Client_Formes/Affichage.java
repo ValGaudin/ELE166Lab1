@@ -32,7 +32,7 @@ public class Affichage extends JFrame{
 	private static final String TITRE_CLIENT = "Client de Formes";
 
 	private static final int DELAI_MS = 25;
-	private static final int NOMBRE_FORME_AFFICHE = 100;
+	private static final int NOMBRE_FORME_AFFICHE = 10;
 	private static final int LARGEUR_CANEVAS = 500;
 	private static final int HAUTEUR_CANEVAS = 500;
 	private static final int MARGE_H = 50;
@@ -100,9 +100,7 @@ public class Affichage extends JFrame{
 				// faire un cast (transtypage) en Graphics2D depour avoir plus de fonctionnalité
 				Graphics2D g2d = (Graphics2D) g;
 
-				g2d.setRenderingHint(
-						RenderingHints.KEY_ANTIALIASING,
-						RenderingHints.VALUE_ANTIALIAS_ON);
+				g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
 				Forme forme = null;
 				Shape dessin = null;
@@ -110,11 +108,11 @@ public class Affichage extends JFrame{
 
 				while (iterator.hasNext()) {
 					forme = iterator.next();
-					dessin = forme.obtenirDessin();
+					dessin = forme.dessinerForme();
 
 					g2d.setPaint(forme.obtenirCouleur());
 					g2d.fill(dessin);
-					g2d.setPaint(Color.GREEN);
+					g2d.setPaint(Color.WHITE);
 					g2d.draw(dessin);
 				}
 			}
@@ -155,7 +153,7 @@ public class Affichage extends JFrame{
 	 * permet d'initialiser et lancer le frame à l'aide des 
 	 * variables constantes de cette classe.
 	 * 
-	 * @param jFrame le jFrame à initialiser et à lancer
+	 * @param jFrame le jFrame à initialiser et à +lancer
 	 */
 	public void launch(final JFrame jFrame) {
 		jFrame.setTitle(TITRE_CLIENT);

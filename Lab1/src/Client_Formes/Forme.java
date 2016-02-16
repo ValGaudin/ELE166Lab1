@@ -8,9 +8,7 @@ import java.awt.Shape;
  * Forme est une classe qui permet de créer un objet hérité. 
  */
 public abstract class Forme{
-	private Shape dessin = null;
-	private Color couleur = null;
-	private int numeroIDLogger = 0;
+	private int numeroIDLogger;
 	
 	/**
 	 * Constructeur protégé de la classe <b><i>Forme</i></b> 
@@ -20,7 +18,6 @@ public abstract class Forme{
 	 */
 	protected Forme(int numeroIDLogger){
 		this.numeroIDLogger = numeroIDLogger;
-		this.couleur = obtenirCouleur();
 	}
 	
 	/**
@@ -29,7 +26,7 @@ public abstract class Forme{
 	 * 
 	 * @return Shape le dessin de la forme à afficher
 	 */
-	protected abstract Shape dessinerForme();
+	public abstract Shape dessinerForme();
 	
 	/**
 	 * <b><i>obtenirCouleur</i></b> 
@@ -38,26 +35,6 @@ public abstract class Forme{
 	 * @return Color la couleur de la forme
 	 */
 	public abstract Color obtenirCouleur();
-	
-	/**
-	 * <b><i>definirDessin</i></b> 
-	 * permet de définir le dessin de la forme.
-	 * 
-	 * @param dessin le dessin de la forme
-	 */
-	protected void definirDessin(Shape dessin){
-		this.dessin = dessin;
-	}
-	
-	/**
-	 * <b><i>obtenirDessin</i></b> 
-	 * permet de retourner le dessin de la forme.
-	 * 
-	 * @return Shape le dessin de la forme
-	 */
-	public Shape obtenirDessin() {
-		return dessin;
-	}
 	
 	/**
 	 * <b><i>obtenirIDLogger</i></b> 
